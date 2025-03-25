@@ -1,3 +1,31 @@
+Pandas数据分析（进阶版）
+
+‌场景‌：分析服务器性能监控数据
+
+pythonCopy Code
+import pandas as pd
+
+# 读取监控数据
+df = pd.read_csv('server_metrics.csv', parse_dates=['timestamp'])
+
+# 1. 处理缺失值
+df.fillna({'cpu_usage': df['cpu_usage'].median()}, inplace=True)
+
+# 2. 按时间聚合
+hourly_stats = df.resample('1H', on='timestamp').agg({
+    'cpu_usage': 'mean',
+    'memory_usage': 'max'
+})
+
+# 3. 筛选异常时段
+high_load = df[(df['cpu_usage'] > 90) & (df['memory_usage'] > 85)]
+
+# 4. 输出结果
+print("每小时统计:\n", hourly_stats)
+print("\n高负载时段:\n", high_load[['timestamp', 'host']])
+
+
+
 CSV文件处理（基础版）
 
 ‌场景‌：处理服务器访问日志的CSV文件
