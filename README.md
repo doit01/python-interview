@@ -1,3 +1,43 @@
+抓取电商商品数据并规范化存储
+
+pythonCopy Code
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
+# 多页数据抓取（带异常重试）
+def scrape_products(base_url, max_pages=5):
+    products = []
+    for page in range(1, max_pages+1):
+        try:
+            response = requests.get(f"{base_url}?page={page}", timeout=10)
+            soup = BeautifulSoup(response.text, 'lxml')
+            
+            # 提取商品卡片
+            cards = soup.select('div.product-card')
+            for card in cards:
+                # 清洗价格数据（处理货币符号）
+                price = card.find('span', class_='price').text
+                price = float(price.strip('¥$').replace(',', ''))
+                
+                # 构建结构化数据
+                products.append({
+                    'title': card.h3.text.strip(),
+                    'price': price,
+                    'rating': float(card['data-rating']),
+                    'category': card['data-category']
+                })
+        except (requests.Timeout, AttributeError) as e:
+            print(f"第{page}页抓取失败: {str(e)}")
+    
+    # 转换为DataFrame并去重
+    return pd.DataFrame(products).drop_duplicates(subset=['title'])
+
+# 执行抓取
+df = scrape_products("https://example.com/products")
+
+
+
 Pandas数据分析（进阶版）
 
 ‌场景‌：分析服务器性能监控数据
