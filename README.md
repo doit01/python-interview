@@ -1,3 +1,29 @@
+为机器学习模型构建高级特征
+
+pythonCopy Code
+from sklearn.preprocessing import PolynomialFeatures
+import numpy as np
+
+# 1. 创建交互特征
+df['price_rating'] = df['price'] * df['rating']
+
+# 2. 多项式特征生成（二次项）
+poly = PolynomialFeatures(degree=2, interaction_only=True)
+poly_features = poly.fit_transform(df[['price', 'rating']])
+df_poly = pd.DataFrame(poly_features, columns=poly.get_feature_names_out())
+
+# 3. 时间序列特征生成（假设新增时间列）
+df['purchase_date'] = pd.date_range(start='2025-01-01', periods=len(df))
+df['day_of_week'] = df['purchase_date'].dt.dayofweek
+df['is_weekend'] = df['day_of_week'].isin([5,6]).astype(int)
+
+# 4. 分箱处理
+df['price_bin'] = pd.cut(df['price'], 
+                        bins=[0, 50, 100, 200, np.inf],
+                        labels=['low', 'medium', 'high', 'premium'])
+
+
+
 抓取电商商品数据并规范化存储
 
 pythonCopy Code
