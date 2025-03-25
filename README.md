@@ -1,3 +1,43 @@
+CSV文件处理（基础版）
+
+‌场景‌：处理服务器访问日志的CSV文件
+
+pythonCopy Code
+import csv
+
+# 统计IP访问频次
+ip_counter = {}
+with open('access.log.csv', 'r') as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        ip = row['client_ip']
+        ip_counter[ip] = ip_counter.get(ip, 0) + 1
+
+# 输出TOP10访问IP
+sorted_ips = sorted(ip_counter.items(), key=lambda x: x, reverse=True)[:10]
+for ip, count in sorted_ips:
+    print(f"{ip}: {count}次")
+
+
+pythonCopy Code
+# 使用生成器逐块处理
+def process_large_file(filename, chunk_size=10000):
+    with open(filename, 'r', encoding='utf-8') as f:
+        while True:
+            chunk = [next(f).strip() for _ in range(chunk_size)]
+            if not chunk:
+                break
+            # 在此处理数据块（如正则匹配）
+            yield [line for line in chunk if 'ERROR' in line]
+
+# 使用示例
+error_lines = []
+for partial_result in process_large_file('app.log'):
+    error_lines.extend(partial_result)
+print(f"发现{len(error_lines)}条错误日志")
+
+
+
 Python内建数据类型有哪些‌：
 
     int、bool、str、list、tuple、dict‌1
