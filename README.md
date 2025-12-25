@@ -1,3 +1,10 @@
+ download https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe
+install it ，go D:\forge\Scripts  run activate.bat
+open Miniforge Prompt,input conda init 
+in any cmd terminal run : jupyter lab ,then open a http://localhost:8888/lab automatically
+
+
+
 列表是可变的，元祖是不可变的
 深拷贝是将对象本身复制给另一个对象。这意味着如果对对象的副本进行更改时不会影响原对象
 
